@@ -98,6 +98,7 @@ var extractor
               break
             default:
               translationKey = r[1].trim()
+              translationDefaultValue = (r[2] || "").trim()
           }
 
           // Avoid empty translation
