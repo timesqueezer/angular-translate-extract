@@ -116,38 +116,11 @@ export class Translations {
       obj = {}
     }
 
-    // Get all linked translations
-    // https://angular-translate.github.io/docs/#/guide/02_getting-started
-    _.forEach(_.filter(obj, (v) => v && v.indexOf('@:') === 0), (translationKey) => {
-      let virtual = translationKey.substr(2)
-      // Add translations if not exists!
-      if (!Translations.isValidTranslation(translations[virtual])) {
-        translations[virtual] = obj[virtual]
-      }
-    })
-
     // Case safeMode: Dont delete unused value if true
-    if (this.params.safeMode) {
-      returnTranslations = _.extend(translations, obj)
-      _.forEach(returnTranslations, (v, k) => {
-        if (Translations.isValidTranslation(v)) {
-          returnTranslations[k] = v
-        } else {
-          returnTranslations[k] = ""
-        }
-      })
-    } else {
-      // Parse all stored translation to build output
-      _.forEach(translations, (translationValue, translationKey) => {
-        if (Translations.isValidTranslation(obj[translationKey])) {       // Get from obj translations
-          returnTranslations[translationKey] = obj[translationKey]
-        } else if (Translations.isValidTranslation(translationValue)) {   // Get from extracted translations
-          returnTranslations[translationKey] = translationValue
-        } else {                                                          // Feed empty translation (null or "")
-          returnTranslations[translationKey] = ""
-        }
-      })
-    }
+    returnTranslations = _.extend({}, this.params.safeMode ? obj : {}, translations)
+    _.forEach(returnTranslations, (v, k) => {
+      returnTranslations[k] = Translations.isValidTranslation(v) ? v : ''
+    })
 
     if (!!useDefault) {
       returnTranslations = this.getDefaultTranslations(returnTranslations)
